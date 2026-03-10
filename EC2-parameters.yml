@@ -6,7 +6,7 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
 
   SecurityGroupIp:
-    Description: Introduce la IP para hacer la whitelist en nuestro SG.
+    Description: Introduce la IP para hacer la whitelist en nuestro SG para el puerto SSH.
     Type: String
     Default: 0.0.0.0/0
     AllowedValues: 
