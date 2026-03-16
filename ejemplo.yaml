@@ -1,0 +1,23 @@
+---
+marca: Lamborguini
+llantas: 4
+puertas: 4
+
+# Lista
+detalles: 
+  - luces
+  - colita
+  - dados
+
+# Lista
+marcaDeLlantas: [a, b, c, d]
+
+# Diccionario (lleva dos tabulaciones)
+licencia: 
+    year: 2020
+    model: Murcielago
+    type: Sport
+
+# Booleano
+registrado: True
+chocado: False
