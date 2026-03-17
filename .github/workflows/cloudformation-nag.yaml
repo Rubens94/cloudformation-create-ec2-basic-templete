@@ -41,7 +41,7 @@ jobs:
         run: |
           docker run --rm -v ${{ github.workspace }}:/data \
           stelligent/cfn_nag \
-          cfn_nag_scan /data/templates --fail-on-warnings
+          --input-path /data/templates --fail-on-warnings
 
       # -------------------------------
       # 🔎 Checkov (IaC scanning)
