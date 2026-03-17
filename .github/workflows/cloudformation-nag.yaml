@@ -18,4 +18,4 @@ jobs:
       # Ejecutar cfn
       - run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 
-          cfn_nag_scan --input-path main.yaml
+          cfn_nag_scan --input-path main.yml
