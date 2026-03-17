@@ -14,3 +14,8 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" # Activar brew en la máquina de ubuntu
           brew install ruby brew-gem 
           brew gem install cfn-nag
+      
+      # Ejecutar cfn
+      - run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 
+          cfn_nag_scan --input-path main.yaml
