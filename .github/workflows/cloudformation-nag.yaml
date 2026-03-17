@@ -23,6 +23,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::084311854915:role/Github-Actions
           aws-region: us-west-2
+          
 
       # -------------------------------
       # ✅ Validación CloudFormation
