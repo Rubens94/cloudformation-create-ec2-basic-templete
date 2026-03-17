@@ -1,6 +1,14 @@
 name: DevSecOps IaC Pipeline
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+# 🔐 NECESARIO para OIDC (si no, falla)
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   iac-security:
@@ -11,19 +19,26 @@ jobs:
         uses: actions/checkout@v3
 
       # -------------------------------
-      # 1. Validación CloudFormation
+      # 🔐 Autenticación segura con AWS (OIDC)
+      # -------------------------------
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::084311854915:role/Github-Actions
+          aws-region: us-west-2
+
+      # -------------------------------
+      # ✅ Validación CloudFormation
       # -------------------------------
       - name: Validate CloudFormation templates
         run: |
           for file in templates/*.yml; do
             echo "Validating $file"
-            aws cloudformation validate-template --template-body file://$file || exit 1
+            aws cloudformation validate-template --template-body file://$file
           done
-        env:
-          AWS_DEFAULT_REGION: us-east-1
 
       # -------------------------------
-      # 2. cfn-nag (Docker)
+      # 🔍 Seguridad con cfn-nag (Docker)
       # -------------------------------
       - name: Run cfn-nag
         run: |
@@ -32,7 +47,7 @@ jobs:
           cfn_nag_scan --input-path /data/templates --fail-on-warnings
 
       # -------------------------------
-      # 3. Checkov (IaC scanning)
+      # 🔎 Checkov (IaC scanning)
       # -------------------------------
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@master
@@ -42,7 +57,7 @@ jobs:
           soft_fail: false
 
       # -------------------------------
-      # 4. Trivy (misconfig + secrets)
+      # 🛡️ Trivy (misconfig + secrets)
       # -------------------------------
       - name: Run Trivy scan
         uses: aquasecurity/trivy-action@master
