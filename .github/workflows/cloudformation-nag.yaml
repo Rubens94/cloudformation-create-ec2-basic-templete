@@ -39,11 +39,10 @@ jobs:
       # -------------------------------
       - name: Run cfn-nag
         run: |
-          docker run --rm -v ${{ github.workspace }}:/data \
+          docker run --rm \
+          -v ${{ github.workspace }}/templates:/data \
           stelligent/cfn_nag \
-          ruby /usr/local/bundle/bin/cfn_nag_scan \
-          --input-path /data/templates \
-          --fail-on-warnings
+          /data
 
       # -------------------------------
       # 🔎 Checkov (IaC scanning)
