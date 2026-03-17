@@ -1,25 +1,52 @@
-name: Cloudformation nag
+name: DevSecOps IaC Pipeline
+
 on: [push]
 
 jobs:
-  cloudformation-nag:
+  iac-security:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-
-      - name: Install dependencies with Bundler
-        # Instalar varios scripts en la misma sesión
+      # -------------------------------
+      # 1. Validación CloudFormation
+      # -------------------------------
+      - name: Validate CloudFormation templates
         run: |
-          gem install bundler
-          bundle init
-          echo "gem 'cfn-nag', '0.8.10'" >> Gemfile
-          bundle install
+          for file in templates/*.yml; do
+            echo "Validating $file"
+            aws cloudformation validate-template --template-body file://$file || exit 1
+          done
+        env:
+          AWS_DEFAULT_REGION: us-east-1
 
-      - name: Security Scan
-        run: bundle exec cfn_nag_scan --input-path templates/
+      # -------------------------------
+      # 2. cfn-nag (Docker)
+      # -------------------------------
+      - name: Run cfn-nag
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/data \
+          stelligent/cfn_nag \
+          cfn_nag_scan --input-path /data/templates --fail-on-warnings
+
+      # -------------------------------
+      # 3. Checkov (IaC scanning)
+      # -------------------------------
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: templates
+          framework: cloudformation
+          soft_fail: false
+
+      # -------------------------------
+      # 4. Trivy (misconfig + secrets)
+      # -------------------------------
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: templates/
+          exit-code: 1
