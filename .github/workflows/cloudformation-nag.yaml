@@ -10,12 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: | # usar varios scripts en la misma sesión
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" # Activar brew en la máquina de ubuntu
+      # Ejecutar varios scripts en la misma sesión
+      - run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 
           brew install ruby brew-gem 
           brew gem install cfn-nag
       
       # Ejecutar cfn
       - run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 
-          cfn_nag_scan --input-path main.yml
+          cfn_nag_scan --input-path templates/*
