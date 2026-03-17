@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" # Activar brew en la máquina de ubuntu
-      - run: brew install ruby brew-gem # Instalar gem de ruby
-      - run: brew gem install cfn-nag
+      - run: | # usar varios scripts en la misma sesión
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" # Activar brew en la máquina de ubuntu
+          brew install ruby brew-gem 
+          brew gem install cfn-nag
