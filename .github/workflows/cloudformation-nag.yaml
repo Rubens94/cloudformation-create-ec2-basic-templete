@@ -2,7 +2,7 @@ name: DevSecOps IaC Pipeline
 
 on: [push]
 
-# 🔐 NECESARIO para OIDC (si no, falla)
+# 🔐 NECESARIO para OIDC
 permissions:
   id-token: write
   contents: read
@@ -23,7 +23,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::084311854915:role/Github-Actions
           aws-region: us-west-2
-          
 
       # -------------------------------
       # ✅ Validación CloudFormation
@@ -36,13 +35,13 @@ jobs:
           done
 
       # -------------------------------
-      # 🔍 Seguridad con cfn-nag (Docker)
+      # 🔍 Seguridad con cfn-nag (Docker) ✅ FIX
       # -------------------------------
       - name: Run cfn-nag
         run: |
           docker run --rm -v ${{ github.workspace }}:/data \
           stelligent/cfn_nag \
-          cfn_nag_scan --input-path /data/templates --fail-on-warnings
+          cfn_nag_scan /data/templates --fail-on-warnings
 
       # -------------------------------
       # 🔎 Checkov (IaC scanning)
