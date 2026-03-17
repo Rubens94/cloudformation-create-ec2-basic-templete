@@ -39,10 +39,14 @@ jobs:
       # -------------------------------
       - name: Run cfn-nag
         run: |
-          docker run --rm \
-          -v ${{ github.workspace }}/templates:/data \
-          stelligent/cfn_nag \
-          /data
+          for file in templates/*.yml templates/*.yaml; do
+            [ -e "$file" ] || continue
+            echo "Scanning $file"
+            docker run --rm \
+              -v ${{ github.workspace }}:/data \
+              stelligent/cfn_nag \
+              /data/$file || exit 1
+          done
 
       # -------------------------------
       # 🔎 Checkov (IaC scanning)
