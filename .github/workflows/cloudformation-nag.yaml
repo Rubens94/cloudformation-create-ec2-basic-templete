@@ -1,9 +1,6 @@
 name: DevSecOps IaC Pipeline
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
+on: [push]
 
 # 🔐 NECESARIO para OIDC (si no, falla)
 permissions:
