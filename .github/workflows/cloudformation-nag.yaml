@@ -4,16 +4,22 @@ on: [push]
 jobs:
   cloudformation-nag:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7'
 
-      - name: Install cfn-nag
+      - name: Install dependencies with Bundler
+        # Instalar varios scripts en la misma sesión
         run: |
-          gem install cfn-nag
+          gem install bundler
+          bundle init
+          echo "gem 'cfn-nag', '0.8.10'" >> Gemfile
+          bundle install
 
       - name: Security Scan
-        run: cfn_nag_scan --input-path templates/
+        run: bundle exec cfn_nag_scan --input-path templates/
